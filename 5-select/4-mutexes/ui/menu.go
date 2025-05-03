@@ -1,8 +1,11 @@
 package ui
 
 import (
+	"bufio"
 	"fmt"
 	"github.com/fatih/color"
+	"os"
+	"strings"
 )
 
 var (
@@ -33,7 +36,16 @@ func clearScreen() {
 }
 
 func readMenuChoiceInput() string {
-	//bufio reader etc.
+	reader := bufio.NewReader(os.Stdin)
+	line, _ := reader.ReadString('\n')
 
+	switch strings.TrimSpace(line) {
+	case "1":
+		return "host"
+	case "2":
+		return "client"
+	default:
+		return "client"
+	}
 	//return host|client (I did not prefer boolean vars because misunderstanding can occur over the references )
 }
