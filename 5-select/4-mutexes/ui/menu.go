@@ -6,19 +6,21 @@ import (
 )
 
 var (
-	titleColor = color.New(color.BgHiCyan, color.Bold, color.FgBlack)
+	mainTitleColor   = color.New(color.BgHiCyan, color.Bold, color.FgBlack)
+	selectTitleColor = color.New(color.FgHiMagenta)
+	optionsColor     = color.New(color.FgYellow)
 )
 
 func ShowMainMenu() {
 	clearScreen() //clean the entail terminal screen
 
 	fmt.Println("======================================")
-	titleColor.Println("      Welcome to THE BOMBGAME v0.1    ")
+	mainTitleColor.Println("     Welcome to THE BOMBGAME v0.1     ")
 	fmt.Println("======================================\n")
-	fmt.Println("    Please select a option [1 or 2]:\n")
-	fmt.Println("          1- Host a new game")
-	fmt.Println("           2- Join the game")
-	fmt.Println(" ======================================")
+	selectTitleColor.Println("   Please select a option [1 or 2]:\n")
+	optionsColor.Println("        [1]- Host a new game")
+	optionsColor.Println("        [2]-  Join the game\n")
+	fmt.Println("======================================")
 }
 
 func clearScreen() {
