@@ -1,6 +1,7 @@
 package ui
 
 import (
+	"bombgame/conf"
 	"bufio"
 	"fmt"
 	"github.com/fatih/color"
@@ -16,14 +17,15 @@ var (
 	choiceWarning    = color.New(color.BgRed, color.Bold)
 )
 
-func MainMenu() string {
+func MainMenu() {
 	for {
 		clearScreen()                        //clean the entail terminal screen
 		mainMenuText()                       // show the menu text
 		inputChoice := readMenuChoiceInput() //return the choice
 
 		if inputChoice != "invalid" {
-			return inputChoice
+			conf.PlayerStatus = inputChoice // assorting input data to config's project based global var
+			return
 		}
 	}
 }
