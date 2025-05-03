@@ -6,18 +6,26 @@ import (
 	"github.com/fatih/color"
 	"os"
 	"strings"
+	"time"
 )
 
 var (
 	mainTitleColor   = color.New(color.BgHiCyan, color.Bold, color.FgBlack)
 	selectTitleColor = color.New(color.FgHiMagenta)
 	optionsColor     = color.New(color.FgYellow)
+	choiceWarning    = color.New(color.BgRed, color.Bold)
 )
 
 func MainMenu() string {
-	clearScreen()                //clean the entail terminal screen
-	mainMenuText()               // show the menu text
-	return readMenuChoiceInput() //return the choice
+	for {
+		clearScreen()                        //clean the entail terminal screen
+		mainMenuText()                       // show the menu text
+		inputChoice := readMenuChoiceInput() //return the choice
+
+		if inputChoice != "invalid" {
+			return inputChoice
+		}
+	}
 }
 
 func mainMenuText() {
@@ -36,6 +44,7 @@ func clearScreen() {
 }
 
 func readMenuChoiceInput() string {
+
 	reader := bufio.NewReader(os.Stdin)
 	line, _ := reader.ReadString('\n')
 
@@ -45,7 +54,17 @@ func readMenuChoiceInput() string {
 	case "2":
 		return "client"
 	default:
-		return "client"
+		clearScreen()
+		inputWarningMessage()
+		time.Sleep(time.Second * 3)
+		return "invalid"
 	}
 	//return host|client (I did not prefer boolean vars because misunderstanding can occur over the references )
+
+}
+
+func inputWarningMessage() {
+	fmt.Println("======================================")
+	choiceWarning.Println("    Please select from only 1 or 2    ")
+	fmt.Println("======================================")
 }
