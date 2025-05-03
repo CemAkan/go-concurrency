@@ -11,8 +11,13 @@ var (
 	optionsColor     = color.New(color.FgYellow)
 )
 
-func ShowMainMenu() {
-	clearScreen() //clean the entail terminal screen
+func MainMenu() string {
+	clearScreen()                //clean the entail terminal screen
+	mainMenuText()               // show the menu text
+	return readMenuChoiceInput() //return the choice
+}
+
+func mainMenuText() {
 
 	fmt.Println("======================================")
 	mainTitleColor.Println("     Welcome to THE BOMBGAME v0.1     ")
@@ -25,4 +30,10 @@ func ShowMainMenu() {
 
 func clearScreen() {
 	fmt.Print("\033[H\033[2J")
+}
+
+func readMenuChoiceInput() string {
+	//bufio reader etc.
+
+	//return host|client (I did not prefer boolean vars because misunderstanding can occur over the references )
 }
