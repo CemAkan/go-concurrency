@@ -1,5 +1,1 @@
 package network
-
-func main() {
-
-}

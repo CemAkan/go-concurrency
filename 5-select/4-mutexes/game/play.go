@@ -1,5 +1,1 @@
 package game
-
-func main() {
-
-}
