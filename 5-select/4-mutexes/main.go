@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	ui.MainMenu()
+	ui.UserInputStart()
 
 }

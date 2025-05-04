@@ -17,7 +17,12 @@ var (
 	choiceWarning    = color.New(color.BgRed, color.Bold)
 )
 
-func MainMenu() {
+func UserInputStart() {
+	mainMenu()
+	askName()
+}
+
+func mainMenu() {
 	for {
 		clearScreen()                        //clean the entail terminal screen
 		mainMenuText()                       // show the menu text
@@ -76,7 +81,7 @@ func reader() string {
 	return strings.TrimSpace(line)
 }
 
-func AskName() {
+func askName() {
 	for {
 		clearScreen()
 		fmt.Println("Please, write a name:")
