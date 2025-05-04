@@ -67,3 +67,14 @@ func (b *Bomb) IsExploded() bool {
 	}
 	return false
 }
+
+func (b *Bomb) WhoHold() string {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	if b.holder == hostHolder {
+		return hostHolder
+	} else {
+		return clientHolder
+	}
+}
