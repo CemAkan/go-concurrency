@@ -36,3 +36,14 @@ func randHoldersSelector() string {
 	}
 	return clientHolder
 }
+
+func (b *Bomb) DecreaseTime(holdingTime float64) {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	b.timeLeft -= holdingTime
+
+	if b.timeLeft <= 0 {
+		b.isExploded = true
+	}
+}
