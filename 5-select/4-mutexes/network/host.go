@@ -19,7 +19,7 @@ func StartHostTCP() {
 }
 
 func getLocalIP() string {
-	conn, err := net.Dial("udp", "8.8.8.8")
+	conn, err := net.Dial("udp", "8.8.8.8:80")
 	if err != nil {
 		log.Println("ERROR: UDP connection can not establish with google for getting ip")
 		return "localhost"
