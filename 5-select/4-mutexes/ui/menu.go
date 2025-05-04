@@ -15,11 +15,16 @@ var (
 	selectTitleColor = color.New(color.FgHiMagenta)
 	optionsColor     = color.New(color.FgYellow)
 	choiceWarning    = color.New(color.BgRed, color.Bold)
+	askSettingsTitle = color.New(color.BgWhite)
 )
 
 func UserInputStart() {
 	mainMenu()
 	askName()
+
+	if conf.PlayerStatus == "client" {
+		askIP()
+	}
 }
 
 func mainMenu() {
@@ -84,7 +89,7 @@ func reader() string {
 func askName() {
 	for {
 		clearScreen()
-		fmt.Println("Please, write a name:")
+		askSettingsTitle.Println("Please, write a name:")
 		nameInput := reader()
 
 		if len(nameInput) < 2 {
@@ -93,4 +98,11 @@ func askName() {
 		conf.PlayerName = nameInput
 		return
 	}
+}
+
+func askIP() {
+	clearScreen()
+	askSettingsTitle.Println("Please write host [ IP:PORT ] to connect:")
+
+	conf.GameAddress = reader()
 }
