@@ -47,3 +47,14 @@ func (b *Bomb) DecreaseTime(holdingTime float64) {
 		b.isExploded = true
 	}
 }
+
+func (b *Bomb) SwitchHolder() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	if b.holder == hostHolder {
+		b.holder = clientHolder
+	} else {
+		b.holder = hostHolder
+	}
+}
