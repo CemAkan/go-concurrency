@@ -47,10 +47,7 @@ func clearScreen() {
 
 func readMenuChoiceInput() string {
 
-	reader := bufio.NewReader(os.Stdin)
-	line, _ := reader.ReadString('\n')
-
-	switch strings.TrimSpace(line) {
+	switch reader() {
 	case "1":
 		return "host"
 	case "2":
@@ -69,4 +66,11 @@ func inputWarningMessage() {
 	fmt.Println("======================================")
 	choiceWarning.Println("    Please select from only 1 or 2    ")
 	fmt.Println("======================================")
+}
+
+func reader() string {
+	reader := bufio.NewReader(os.Stdin)
+	line, _ := reader.ReadString('\n')
+
+	return strings.TrimSpace(line)
 }
