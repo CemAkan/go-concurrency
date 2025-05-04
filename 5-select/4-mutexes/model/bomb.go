@@ -58,3 +58,12 @@ func (b *Bomb) SwitchHolder() {
 		b.holder = hostHolder
 	}
 }
+
+func (b *Bomb) IsExploded() bool {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	if b.isExploded {
+		return true
+	}
+	return false
+}
