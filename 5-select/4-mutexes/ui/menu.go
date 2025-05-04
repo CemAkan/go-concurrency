@@ -53,19 +53,20 @@ func readMenuChoiceInput() string {
 	case "2":
 		return "client"
 	default:
-		clearScreen()
-		inputWarningMessage()
-		time.Sleep(time.Second * 3)
+		showWarningMessage("Please select from only 1 or 2")
 		return "invalid"
 	}
 	//return host|client (I did not prefer boolean vars because misunderstanding can occur over the references )
 
 }
 
-func inputWarningMessage() {
+func showWarningMessage(msg string) {
+	clearScreen()
 	fmt.Println("======================================")
-	choiceWarning.Println("    Please select from only 1 or 2    ")
+	choiceWarning.Println(msg)
 	fmt.Println("======================================")
+
+	time.Sleep(time.Second * 3)
 }
 
 func reader() string {
@@ -73,4 +74,18 @@ func reader() string {
 	line, _ := reader.ReadString('\n')
 
 	return strings.TrimSpace(line)
+}
+
+func AskName() {
+	for {
+		clearScreen()
+		fmt.Println("Please, write a name:")
+		nameInput := reader()
+
+		if len(nameInput) < 2 {
+			showWarningMessage("Name too short. Try again please")
+		}
+		conf.PlayerName = nameInput
+		return
+	}
 }
