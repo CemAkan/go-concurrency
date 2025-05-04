@@ -11,11 +11,12 @@ import (
 )
 
 var (
-	mainTitleColor   = color.New(color.BgHiCyan, color.Bold, color.FgBlack)
-	selectTitleColor = color.New(color.FgHiMagenta)
-	optionsColor     = color.New(color.FgYellow)
-	choiceWarning    = color.New(color.BgRed, color.Bold)
-	askSettingsTitle = color.New(color.BgWhite, color.FgBlack)
+	mainTitleColor        = color.New(color.BgHiCyan, color.Bold, color.FgBlack)
+	selectTitleColor      = color.New(color.FgHiMagenta)
+	optionsColor          = color.New(color.FgYellow)
+	choiceWarningColor    = color.New(color.BgRed, color.Bold)
+	askSettingsTitleColor = color.New(color.BgWhite, color.FgBlack)
+	infoTitleColor        = color.New(color.BgWhite, color.FgHiYellow)
 )
 
 func UserInputStart() {
@@ -73,7 +74,7 @@ func readMenuChoiceInput() string {
 func showWarningMessage(msg string) {
 	clearScreen()
 	fmt.Println("======================================")
-	choiceWarning.Println(msg)
+	choiceWarningColor.Println(msg)
 	fmt.Println("======================================")
 
 	time.Sleep(time.Second * 3)
@@ -89,7 +90,7 @@ func reader() string {
 func askName() {
 	for {
 		clearScreen()
-		askSettingsTitle.Print("Please, write a name: ")
+		askSettingsTitleColor.Print("Please, write a name: ")
 		nameInput := reader()
 
 		if len(nameInput) < 2 {
@@ -102,7 +103,15 @@ func askName() {
 
 func askIP() {
 	clearScreen()
-	askSettingsTitle.Print("Please write host [ IP:PORT ] to connect: ")
+	askSettingsTitleColor.Print("Please write host [ IP:PORT ] to connect: ")
 
 	conf.GameAddress = reader()
+}
+
+func HostInfoShowMenu(ip string, port int) {
+	clearScreen()
+	fmt.Println("======================================")
+	fmt.Print("Game address is: ")
+	infoTitleColor.Println(ip, ":", port)
+	fmt.Println("======================================")
 }
