@@ -1,6 +1,7 @@
 package model
 
 import (
+	"log"
 	"math/rand"
 	"sync"
 )
@@ -20,12 +21,18 @@ type Bomb struct {
 }
 
 func NewBomb() *Bomb {
+	randHolder := randHoldersSelector()
+	duration := float64(rand.Intn(randTime) + randTimeMin)
+
+	log.Printf("New bomb created by %s with duration %.2fs", randHolder, duration)
+
 	return &Bomb{
 		mu:         sync.Mutex{},
-		holder:     randHoldersSelector(),
+		holder:     randHolder,
 		isExploded: false,
-		timeLeft:   float64(rand.Intn(randTime) + randTimeMin),
+		timeLeft:   duration,
 	}
+
 }
 
 func randHoldersSelector() string {
@@ -45,6 +52,7 @@ func (b *Bomb) DecreaseTime(holdingTime float64) {
 
 	if b.timeLeft <= 0 {
 		b.isExploded = true
+		log.Printf("Bomb exploded in hands of %s!", b.holder)
 	}
 }
 
@@ -57,6 +65,7 @@ func (b *Bomb) SwitchHolder() {
 	} else {
 		b.holder = hostHolder
 	}
+	log.Printf("Turn switched. New holder: %s", b.holder)
 }
 
 func (b *Bomb) IsExploded() bool {
