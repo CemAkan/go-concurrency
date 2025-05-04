@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-func StartHostTCP() {
+func StartHostTCP() net.Conn {
 	listener, err := net.Listen("tcp", ":0")
 
 	if err != nil {
@@ -16,6 +16,13 @@ func StartHostTCP() {
 
 	ui.HostInfoShowMenu(getLocalIP(), addr.Port)
 
+	conn, err := listener.Accept()
+
+	if err != nil {
+		log.Fatal("Captain, we have a big problem. Our tcp socket can not accept client's request :'( ")
+	}
+
+	return conn
 }
 
 func getLocalIP() string {
