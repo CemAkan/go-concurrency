@@ -78,3 +78,14 @@ func (b *Bomb) WhoHold() string {
 		return clientHolder
 	}
 }
+
+func (b *Bomb) Snapshot() Bomb {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	return Bomb{
+		holder:     b.holder,
+		isExploded: b.isExploded,
+		timeLeft:   b.timeLeft,
+	}
+
+}
