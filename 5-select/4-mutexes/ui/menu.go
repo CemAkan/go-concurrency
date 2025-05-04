@@ -89,7 +89,7 @@ func reader() string {
 func askName() {
 	for {
 		clearScreen()
-		askSettingsTitle.Println("Please, write a name:")
+		askSettingsTitle.Print("Please, write a name: ")
 		nameInput := reader()
 
 		if len(nameInput) < 2 {
@@ -102,7 +102,7 @@ func askName() {
 
 func askIP() {
 	clearScreen()
-	askSettingsTitle.Println("Please write host [ IP:PORT ] to connect:")
+	askSettingsTitle.Print("Please write host [ IP:PORT ] to connect: ")
 
 	conf.GameAddress = reader()
 }
