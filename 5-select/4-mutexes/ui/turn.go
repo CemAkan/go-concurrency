@@ -14,6 +14,7 @@ func ShowTurnInfo(holderStatus string) {
 		turnText = ">> It is your friend's turn, wait please <<"
 	}
 
+	clearScreen()
 	fmt.Println("=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=")
 	infoTitleColor.Println(turnText)
 	fmt.Println("=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=")
