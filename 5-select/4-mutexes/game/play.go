@@ -6,25 +6,27 @@ import (
 	_ "bombgame/network" //only init calling
 	"bombgame/ui"
 	"encoding/gob"
+	"fmt"
 	"github.com/eiannone/keyboard"
 	"log"
+	"time"
 )
 
-type bombWrapper struct{
+type bombWrapper struct {
 	*model.Bomb
 }
 
-var(
+var (
 	enc *gob.Encoder
 	dec *gob.Decoder
 )
 
-func init(){
+func init() {
 
 	//global keyboard opening & closing
 	err := keyboard.Open()
 
-	if  err != nil {
+	if err != nil {
 		log.Fatalln("Keyboard open error", err)
 	}
 
@@ -39,8 +41,6 @@ func init(){
 
 func StartGame() {
 	log.Println("Game stated for ", conf.PlayerName)
-
-
 
 	if conf.PlayerStatus == "host" { //only host one can create a bomb structure because of the solving conflicts (rand holder & time)
 		bomb := &bombWrapper{model.NewBomb()} //initial create
@@ -69,6 +69,47 @@ func StartGame() {
 	}
 }
 
-func (bomb *bombWrapper) holdSpaceAndDecreaseTime{
+func (bomb *bombWrapper) holdSpaceAndDecreaseTime() {
+	start := time.Now()
+	ticker := time.NewTicker(100 * time.Millisecond)
+	defer ticker.Stop()
 
+	for {
+		select {
+		case <-ticker.C:
+			_, key, err := keyboard.GetKey()
+			if err != nil {
+				log.Println("Keyboard read error: ", err)
+				ui.ShowWarningMessage("Keyboard input error.")
+				return
+			}
+
+			if key == keyboard.KeySpace {
+				bomb.DecreaseTime(0.1)
+				if bomb.IsExploded() {
+					log.Println("Bomb exploded in ", conf.PlayerName, "'s hand")
+
+					if enc.Encode(bomb) != nil { //sending and error check
+						log.Fatalln("Bomb encoding fatal error")
+					}
+
+					ui.ShowGameResult(conf.PlayerStatus)
+					return
+				}
+			} else {
+				held := time.Since(start).Seconds()
+				fmt.Printf("\n⏱️ You held it for %.2f seconds.\n", held)
+
+				bomb.SwitchHolder()
+
+				log.Println("Turn switched")
+
+				if enc.Encode(bomb) != nil { //sending and error check
+					log.Fatalln("Bomb encoding fatal error")
+				}
+
+				return
+			}
+		}
+	}
 }
