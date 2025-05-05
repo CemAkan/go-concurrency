@@ -3,7 +3,6 @@ package game
 import (
 	"bombgame/conf"
 	"bombgame/model"
-	_ "bombgame/network" //only init calling
 	"bombgame/ui"
 	"encoding/gob"
 	"github.com/eiannone/keyboard"
@@ -21,17 +20,9 @@ var (
 )
 
 func init() {
-
-	//global keyboard opening & closing
-	err := keyboard.Open()
-
-	if err != nil {
-		log.Fatalln("Keyboard open error", err)
+	if conf.GameConn == nil {
+		log.Fatal("Global TCP connection is nil (conf.GameConn)")
 	}
-
-	defer keyboard.Close()
-
-	//creating encoder & decoder via tcp socket interface (conn)
 	enc = gob.NewEncoder(conf.GameConn)
 	dec = gob.NewDecoder(conf.GameConn)
 }
@@ -39,13 +30,21 @@ func init() {
 // bosss, I swear. I am not play a game, it is a part of my job vallahi diyom
 
 func StartGame() {
+
+	err := keyboard.Open()
+	if err != nil {
+		log.Fatal("Keyboard init error:", err)
+	}
+	defer keyboard.Close()
+
 	log.Println("Game stated for ", conf.PlayerName)
 
 	if conf.PlayerStatus == "host" { //only host one can create a bomb structure because of the solving conflicts (rand holder & time)
 		bomb := &bombWrapper{model.NewBomb()} //initial create
 		log.Println("Hey, sweety we have a newborn bomb. ", bomb)
 
-		if enc.Encode(bomb) != nil { //sending and error check
+		err := enc.Encode(bomb)
+		if err != nil { //sending and error check
 			log.Fatalln("Bomb encoding fatal error")
 		}
 	}
@@ -88,7 +87,9 @@ func (bomb *bombWrapper) holdSpaceAndDecreaseTime() {
 				if bomb.IsExploded() {
 					log.Println("Bomb exploded in ", conf.PlayerName, "'s hand")
 
-					if enc.Encode(bomb) != nil { //sending and error check
+					err := enc.Encode(bomb)
+
+					if err != nil { //sending and error check
 						log.Fatalln("Bomb encoding fatal error")
 					}
 
@@ -104,7 +105,9 @@ func (bomb *bombWrapper) holdSpaceAndDecreaseTime() {
 
 				log.Println("Turn switched")
 
-				if enc.Encode(bomb) != nil { //sending and error check
+				err := enc.Encode(bomb)
+
+				if err != nil { //sending and error check
 					log.Fatalln("Bomb encoding fatal error")
 				}
 
