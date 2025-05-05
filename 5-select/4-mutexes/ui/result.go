@@ -29,3 +29,10 @@ func ShowGameResult(loserStatus string) {
 
 	os.Exit(0)
 }
+
+func HoldingTimeShower(holdingTime float64) {
+	clearScreen()
+	fmt.Println("=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=")
+	infoTitleColor.Println("You hold it for ", holdingTime, " seconds.")
+	fmt.Println("=-=-=-=-=-=-=-=-=-=-=-=--=-=-=-=-=-=-=-=-=-=-=-=")
+}
