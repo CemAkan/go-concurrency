@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func init() {
+func LogFileInit() {
 
 	//open if it is exist or create new one
 	logFile, err := os.OpenFile("bombgame.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
