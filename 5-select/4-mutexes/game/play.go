@@ -45,21 +45,34 @@ func StartGame() {
 			log.Fatalln("Bomb encoding fatal error")
 		}
 
+		ui.ShowTurnInfo(bomb.WhoHold()) // ui module turn info shower on terminal
+
+		if bomb.WhoHold() == conf.PlayerStatus {
+			holdSpaceAndDecreaseTime(bomb)
+		}
+
+		if bomb.IsExploded() {
+			ui.ShowGameResult(bomb.WhoHold())
+
+		}
+
 	}
 
-	isFirstTurn := true
+	receiverLoop()
 
+}
+
+func receiverLoop() {
 	for {
 		var bomb model.Bomb
 
-		if !(isFirstTurn && conf.PlayerStatus == "host") {
-			err := dec.Decode(&bomb)
-			if err != nil { // receiving bomb and error check
-				ui.ShowWarningMessage("CONNECTION LOST :(")
-				log.Fatalln("I want to a bomb, but you gave me a decoding error whyyy :( ", err)
-			}
+		err := dec.Decode(&bomb)
+		if err != nil { // receiving bomb and error check
+			ui.ShowWarningMessage("CONNECTION LOST :(")
+			log.Fatalln("I want to a bomb, but you gave me a decoding error whyyy :( ", err)
 		}
-		isFirstTurn = false
+
+		//	log.Println("conf status is: ", conf.PlayerStatus, "and bomb holder is: ", bomb.Holder)
 
 		ui.ShowTurnInfo(bomb.WhoHold()) // ui module turn info shower on terminal
 
@@ -76,7 +89,7 @@ func StartGame() {
 
 func holdSpaceAndDecreaseTime(bomb *model.Bomb) {
 	start := time.Now()
-	ticker := time.NewTicker(100 * time.Millisecond)
+	ticker := time.NewTicker(10 * time.Millisecond)
 	defer ticker.Stop()
 
 	for {
