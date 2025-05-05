@@ -33,6 +33,12 @@ func StartGame() {
 			ui.ShowWarningMessage("CONNECTION LOST :(")
 			log.Fatalln("I want to a bomb, but you gave me a decoding error whyyy :(")
 		}
+
 		ui.ShowTurnInfo(bomb.WhoHold()) // ui module turn info shower on terminal
+
+		if bomb.IsExploded() {
+			ui.ShowGameResult(bomb.WhoHold())
+			return
+		}
 	}
 }
