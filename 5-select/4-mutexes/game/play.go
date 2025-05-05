@@ -25,7 +25,7 @@ func init(){
 	err := keyboard.Open()
 
 	if  err != nil {
-		log.Fatalln("Keyboard open error: %v", err)
+		log.Fatalln("Keyboard open error", err)
 	}
 
 	defer keyboard.Close()
