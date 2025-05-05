@@ -6,7 +6,6 @@ import (
 	_ "bombgame/network" //only init calling
 	"bombgame/ui"
 	"encoding/gob"
-	"fmt"
 	"github.com/eiannone/keyboard"
 	"log"
 	"time"
@@ -98,7 +97,8 @@ func (bomb *bombWrapper) holdSpaceAndDecreaseTime() {
 				}
 			} else {
 				held := time.Since(start).Seconds()
-				fmt.Printf("\n⏱️ You held it for %.2f seconds.\n", held)
+
+				ui.HoldingTimeShower(held)
 
 				bomb.SwitchHolder()
 
