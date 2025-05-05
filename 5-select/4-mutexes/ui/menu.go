@@ -77,7 +77,7 @@ func ShowWarningMessage(msg string) {
 	choiceWarningColor.Println(msg)
 	fmt.Println("======================================")
 
-	time.Sleep(time.Second * 3)
+	time.Sleep(time.Second * time.Duration(conf.SleepTime))
 }
 
 func reader() string {
