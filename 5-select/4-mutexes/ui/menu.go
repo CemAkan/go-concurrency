@@ -16,7 +16,7 @@ var (
 	optionsColor          = color.New(color.FgYellow)
 	choiceWarningColor    = color.New(color.BgRed, color.Bold)
 	askSettingsTitleColor = color.New(color.BgWhite, color.FgBlack)
-	infoTitleColor        = color.New(color.BgWhite, color.FgHiYellow)
+	infoTitleColor        = color.New(color.Bold, color.FgYellow)
 )
 
 func UserInputStart() {
