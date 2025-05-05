@@ -1,78 +1,86 @@
-# Mutexes
+# Select Statement
 
-Mutexes (mutual exclusion locks) are synchronization primitives that protect shared resources from concurrent access by multiple goroutines.
+The select statement is a control structure unique to Go that lets goroutines wait on multiple channel operations simultaneously.
 
 ## Key Concepts
 
-- **Exclusive Access**: Only one goroutine can hold the lock at a time
-- **Blocking**: Attempts to acquire a locked mutex will block until the mutex is available
-- **Data Protection**: Used to prevent race conditions on shared data
+- **Multiplexing**: Select allows a goroutine to wait on multiple channel operations
+- **Non-blocking**: Can be used with default case to implement non-blocking operations
+- **Random Selection**: If multiple cases are ready, one is chosen at random
 
-## Types of Mutexes in Go
-
-- **sync.Mutex**: Basic mutual exclusion lock
-- **sync.RWMutex**: Reader/Writer mutual exclusion lock that allows multiple readers or one writer
-
-## Core Methods
-
-For `sync.Mutex`:
-- **Lock()**: Acquires the lock, blocking if necessary
-- **Unlock()**: Releases the lock
-
-For `sync.RWMutex`:
-- **RLock()**: Acquires a read lock
-- **RUnlock()**: Releases a read lock
-- **Lock()**: Acquires a write lock (exclusive)
-- **Unlock()**: Releases a write lock
-
-## Common Usage Pattern
+## Basic Syntax
 
 ```go
-var (
-    mu      sync.Mutex
-    counter int
-)
-
-func increment() {
-    mu.Lock()
-    defer mu.Unlock()
-    counter++
+select {
+case <-channel1:
+    // Code to execute if data received from channel1
+case data := <-channel2:
+    // Code to execute using data received from channel2
+case channel3 <- value:
+    // Code to execute after sending value to channel3
+default:
+    // Code to execute if no channel is ready (optional)
 }
 ```
 
-## Best Practices
+## Common Patterns
 
-- Always use `defer` with `Unlock()` to prevent deadlocks
-- Keep the critical section (locked code) as small as possible
-- Use RWMutex when you have more reads than writes
-- Avoid nested locks to prevent deadlocks
-- Consider using atomic operations for simple cases
+- **Timeout**: Using a time.After channel to implement timeouts
+- **Non-blocking Receives**: Using default case to avoid blocking
+- **Quitting**: Using a done channel to signal termination
+- **Rate Limiting**: Controlling the flow of operations with time-based channels
+- **Priority**: Different arrangements of select statements to implement priority
 
-## Race Conditions
+## Example Patterns
 
-- Race conditions occur when multiple goroutines access shared data concurrently
-- Use the `-race` flag with `go build`, `go run`, or `go test` to detect race conditions
+### Timeout Pattern
+```go
+select {
+case data := <-dataChannel:
+    // Process data
+case <-time.After(5 * time.Second):
+    // Handle timeout
+}
+```
+
+### Quit Signal Pattern
+```go
+select {
+case data := <-dataChannel:
+    // Process data
+case <-quitChannel:
+    // Clean up and return
+}
+```
+
+## Challenges
+
+- Understanding blocking behavior with and without default case
+- Managing multiple potential actions
+- Proper channel closure detection
+- Careful resource cleanup in all cases
 
 ## Exercise Ideas
 
-1. Implement a thread-safe counter
-2. Create a concurrent map with mutex protection
-3. Compare performance of Mutex vs RWMutex in read-heavy scenarios
+1. Implement a timeout for a long-running operation
+2. Create a service that can be gracefully shut down
+3. Build a priority channel system with select
+4. Implement a simple rate limiter
+
+## Best Practices
+
+- Use select to handle multiple possible communication events
+- Combine select with a done or quit channel for cancellation
+- Use default case carefully - it makes select non-blocking
+- Consider fairness in repeated select operations
 
 ## Common Mistakes
 
-- Forgetting to unlock a mutex
-- Copying a mutex (they should not be copied after first use)
-- Using locks inconsistently
-- Creating deadlocks with improper lock ordering
-- Unnecessarily large critical sections
-
-## When to Use Mutexes
-
-- When multiple goroutines need to access and modify shared data
-- When atomic operations are insufficient
-- When channels would be too complex for the synchronization needed
+- Forgetting that without a default case, select will block until a channel is ready
+- Not handling channel close properly in select cases
+- Creating deadlocks by waiting on channels that will never receive
+- Assuming predictable case selection when multiple cases are ready
 
 ## Next Steps
 
-After understanding mutexes, explore the Select statement for managing multiple channel operations. 
+After mastering select, explore fan-in patterns to combine results from multiple concurrent operations. 
