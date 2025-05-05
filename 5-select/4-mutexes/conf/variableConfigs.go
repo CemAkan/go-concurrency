@@ -9,3 +9,5 @@ var PlayerName string
 var GameAddress string
 
 var GameConn net.Conn
+
+var SleepTime int
