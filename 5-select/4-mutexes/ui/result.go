@@ -5,7 +5,7 @@ import (
 	"fmt"
 )
 
-func ShowGAmeResult(loserStaus string) {
+func ShowGameResult(loserStaus string) {
 
 	resultText := "WINNER WINNER CHICKEN DINNER"
 
