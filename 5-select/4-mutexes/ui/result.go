@@ -7,13 +7,10 @@ import (
 
 func ShowGAmeResult(loserStaus string) {
 
-	var resultText string
+	resultText := "WINNER WINNER CHICKEN DINNER"
 
 	if loserStaus == conf.PlayerStatus {
 		resultText = "YOU LOSE HA HA HA"
-	} else {
-
-		resultText = "WINNER WINNER CHICKEN DINNER"
 	}
 
 	fmt.Println("======================================")
