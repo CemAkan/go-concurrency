@@ -2,7 +2,7 @@ package network
 
 import "bombgame/conf"
 
-func init() {
+func NetwokStart() {
 	if conf.PlayerStatus == "host" {
 		startHostTCP()
 	} else {
