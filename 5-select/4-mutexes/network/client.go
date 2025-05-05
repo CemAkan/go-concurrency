@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-func joinHostTCP() net.Conn {
+func joinHostTCP() {
 
 	log.Println("Client try to establish with host at ", conf.GameAddress)
 
