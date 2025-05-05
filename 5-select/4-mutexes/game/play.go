@@ -18,17 +18,21 @@ func StartGame() {
 	enc := gob.NewEncoder(conf.GameConn)
 	dec := gob.NewDecoder(conf.GameConn)
 
-	var bomb *model.Bomb
-
 	if conf.PlayerStatus == "host" { //only host one can create a bomb structure because of the solving conflicts (rand holder & time)
-		bomb = model.NewBomb()
+		bomb := model.NewBomb() //initial create
 		log.Println("Hey, sweety we have a newborn bomb. ", bomb)
 
-		if enc.Encode(bomb) != nil {
+		if enc.Encode(bomb) != nil { //sending and error check
 			log.Fatalln("Bomb encoding fatal error")
 		}
 	}
+	for {
+		var bomb *model.Bomb // all for loop it will be reset
 
-	ui.ShowTurnInfo(bomb.WhoHold())
-
+		if dec.Decode(&bomb) != nil { // receiving bomb and error check
+			ui.ShowWarningMessage("CONNECTION LOST :(")
+			log.Fatalln("I want to a bomb, but you gave me a decoding error whyyy :(")
+		}
+		ui.ShowTurnInfo(bomb.WhoHold()) // ui module turn info shower on terminal
+	}
 }
