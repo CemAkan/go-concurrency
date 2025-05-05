@@ -1,6 +1,7 @@
 package network
 
 import (
+	"bombgame/conf"
 	"bombgame/ui"
 	"log"
 	"net"
@@ -14,7 +15,11 @@ func StartHostTCP() net.Conn {
 	}
 	addr := listener.Addr().(*net.TCPAddr) // getting port and assert the type to interface
 
-	ui.HostInfoShowMenu(getLocalIP(), addr.Port)
+	IPandPort := getLocalIP() + string(addr.Port)
+
+	ui.HostInfoShowMenu(IPandPort)
+
+	conf.GameAddress = IPandPort
 
 	conn, err := listener.Accept()
 
