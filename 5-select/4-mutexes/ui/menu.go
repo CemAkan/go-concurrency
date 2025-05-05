@@ -108,10 +108,10 @@ func askIP() {
 	conf.GameAddress = reader()
 }
 
-func HostInfoShowMenu(ip string, port int) {
+func HostInfoShowMenu(addr string) {
 	clearScreen()
 	fmt.Println("======================================")
 	fmt.Print("Game address is: ")
-	infoTitleColor.Println(ip, ":", port)
+	infoTitleColor.Println(addr)
 	fmt.Println("======================================")
 }
