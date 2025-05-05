@@ -77,6 +77,13 @@ func (b *Bomb) IsExploded() bool {
 	return false
 }
 
+func (b *Bomb) SetExploded() {
+	b.mu.Lock()
+	defer b.mu.Unlock()
+	b.isExploded = true
+
+}
+
 func (b *Bomb) WhoHold() string {
 	b.mu.Lock()
 	defer b.mu.Unlock()
