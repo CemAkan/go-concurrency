@@ -12,7 +12,7 @@ func joinHostTCP() {
 
 	conn, err := net.Dial("tcp", conf.GameAddress)
 	if err != nil || conn == nil {
-		log.Fatalln("I can not establish a tcp connection with host, help me I am a poor client :( ")
+		log.Fatalln("I can not establish a tcp connection with host, help me I am a poor client", err)
 	}
 
 	log.Println("Yeaahhh, client can successfully establish a tcp connection with host at ", conf.GameAddress)
