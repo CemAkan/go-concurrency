@@ -3,6 +3,7 @@ package network
 import (
 	"bombgame/conf"
 	"bombgame/ui"
+	"fmt"
 	"log"
 	"net"
 )
@@ -15,15 +16,15 @@ func startHostTCP() {
 	}
 	addr := listener.Addr().(*net.TCPAddr) // getting port and assert the type to interface
 
-	IPandPort := getLocalIP() + string(addr.Port)
+	hostInfo := fmt.Sprintf("%s:%d", getLocalIP(), addr.Port)
 
-	ui.HostInfoShowMenu(IPandPort)
+	ui.HostInfoShowMenu(hostInfo)
 
-	conf.GameAddress = IPandPort
+	conf.GameAddress = hostInfo
 
 	conn, err := listener.Accept()
 
-	if err != nil {
+	if err != nil || conn == nil {
 		log.Fatal("Captain, we have a big problem. Our tcp socket can not accept client's request :'( ")
 	}
 
@@ -36,5 +37,5 @@ func getLocalIP() string {
 		log.Println("ERROR: UDP connection can not establish with google for getting ip")
 		return "localhost"
 	}
-	return conn.LocalAddr().(*net.TCPAddr).IP.String()
+	return conn.LocalAddr().(*net.UDPAddr).IP.String()
 }
