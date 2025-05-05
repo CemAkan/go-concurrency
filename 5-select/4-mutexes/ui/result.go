@@ -5,11 +5,11 @@ import (
 	"fmt"
 )
 
-func ShowGameResult(loserStaus string) {
+func ShowGameResult(loserStatus string) {
 
 	resultText := "WINNER WINNER CHICKEN DINNER"
 
-	if loserStaus == conf.PlayerStatus {
+	if loserStatus == conf.PlayerStatus {
 		resultText = "YOU LOSE HA HA HA"
 	}
 
