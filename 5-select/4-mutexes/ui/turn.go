@@ -9,9 +9,9 @@ func ShowTurnInfo(holderStatus string) {
 	var turnText string
 
 	if holderStatus == conf.PlayerStatus {
-		turnText = ">> It is your turn. Hold space key <<"
+		turnText = "     >> It is your turn. Hold space key <<"
 	} else {
-		turnText = ">> It is your friend's turn, wait please <<"
+		turnText = "  >> It is your friend's turn, wait please <<"
 	}
 
 	clearScreen()

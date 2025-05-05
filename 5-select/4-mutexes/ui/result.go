@@ -14,7 +14,7 @@ func ShowGameResult(loserStatus string) {
 	resultText := "WINNER WINNER CHICKEN DINNER"
 
 	if loserStatus == conf.PlayerStatus {
-		resultText = "   YOU LOSE HA HA HA"
+		resultText = "     YOU LOSE HA HA HA"
 	}
 
 	fmt.Println("============================")
