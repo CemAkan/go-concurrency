@@ -2,6 +2,7 @@ package game
 
 import (
 	"bombgame/conf"
+	"bombgame/model"
 	_ "bombgame/network" //only init calling
 	"encoding/gob"
 	"log"
@@ -13,6 +14,15 @@ func StartGame() {
 	log.Println("Game stated for ", conf.PlayerName)
 
 	//creating encoder & decoder via tcp socket interface (conn)
-	ecn := gob.NewEncoder(conf.GameConn)
+	enc := gob.NewEncoder(conf.GameConn)
 	dec := gob.NewDecoder(conf.GameConn)
+
+	if conf.PlayerStatus == "host" { //only host one can create a bomb structure because of the solving conflicts (rand holder & time)
+		bomb := model.NewBomb()
+		log.Println("Hey, sweety we have a newborn bomb. ", bomb)
+
+		if enc.Encode(bomb) != nil {
+			log.Fatalln("Bomb encoding fatal error")
+		}
+	}
 }
