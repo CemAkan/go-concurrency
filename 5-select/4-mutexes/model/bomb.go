@@ -14,10 +14,10 @@ var (
 )
 
 type Bomb struct {
-	mu         sync.Mutex
-	holder     string
-	isExploded bool
-	timeLeft   float64
+	mu       sync.Mutex `json:"-"` // gob için encode edilmez
+	TimeLeft float64
+	Holder   string
+	Exploded bool
 }
 
 func NewBomb() *Bomb {
@@ -27,10 +27,10 @@ func NewBomb() *Bomb {
 	log.Printf("New bomb created by %s with duration %.2fs", randHolder, duration)
 
 	return &Bomb{
-		mu:         sync.Mutex{},
-		holder:     randHolder,
-		isExploded: false,
-		timeLeft:   duration,
+		mu:       sync.Mutex{},
+		Holder:   randHolder,
+		Exploded: false,
+		TimeLeft: duration,
 	}
 
 }
@@ -48,11 +48,11 @@ func (b *Bomb) DecreaseTime(holdingTime float64) {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
-	b.timeLeft -= holdingTime
+	b.TimeLeft -= holdingTime
 
-	if b.timeLeft <= 0 {
-		b.isExploded = true
-		log.Printf("Bomb exploded in hands of %s!", b.holder)
+	if b.TimeLeft <= 0 {
+		b.Exploded = true
+		log.Printf("Bomb exploded in hands of %s!", b.Holder)
 	}
 }
 
@@ -60,18 +60,18 @@ func (b *Bomb) SwitchHolder() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
-	if b.holder == hostHolder {
-		b.holder = clientHolder
+	if b.Holder == hostHolder {
+		b.Holder = clientHolder
 	} else {
-		b.holder = hostHolder
+		b.Holder = hostHolder
 	}
-	log.Printf("Turn switched. New holder: %s", b.holder)
+	log.Printf("Turn switched. New holder: %s", b.Holder)
 }
 
 func (b *Bomb) IsExploded() bool {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	if b.isExploded {
+	if b.Exploded {
 		return true
 	}
 	return false
@@ -80,7 +80,7 @@ func (b *Bomb) IsExploded() bool {
 func (b *Bomb) SetExploded() {
 	b.mu.Lock()
 	defer b.mu.Unlock()
-	b.isExploded = true
+	b.Exploded = true
 
 }
 
@@ -88,7 +88,7 @@ func (b *Bomb) WhoHold() string {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 
-	if b.holder == hostHolder {
+	if b.Holder == hostHolder {
 		return hostHolder
 	} else {
 		return clientHolder
@@ -99,9 +99,9 @@ func (b *Bomb) Snapshot() Bomb {
 	b.mu.Lock()
 	defer b.mu.Unlock()
 	return Bomb{
-		holder:     b.holder,
-		isExploded: b.isExploded,
-		timeLeft:   b.timeLeft,
+		Holder:   b.Holder,
+		Exploded: b.Exploded,
+		TimeLeft: b.TimeLeft,
 	}
 
 }
