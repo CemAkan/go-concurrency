@@ -3,9 +3,13 @@ package ui
 import (
 	"bombgame/conf"
 	"fmt"
+	"os"
+	"time"
 )
 
 func ShowGameResult(loserStatus string) {
+
+	clearScreen()
 
 	resultText := "WINNER WINNER CHICKEN DINNER"
 
@@ -21,4 +25,7 @@ func ShowGameResult(loserStatus string) {
 	fmt.Println("============================\n")
 	fmt.Println("============================")
 
+	time.Sleep(time.Second * 5)
+
+	os.Exit(0)
 }
