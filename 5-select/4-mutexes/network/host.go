@@ -7,7 +7,7 @@ import (
 	"net"
 )
 
-func StartHostTCP() net.Conn {
+func startHostTCP() {
 	listener, err := net.Listen("tcp", ":0")
 
 	if err != nil {
@@ -27,7 +27,7 @@ func StartHostTCP() net.Conn {
 		log.Fatal("Captain, we have a big problem. Our tcp socket can not accept client's request :'( ")
 	}
 
-	return conn
+	conf.GameConn = conn
 }
 
 func getLocalIP() string {

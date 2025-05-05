@@ -6,7 +6,7 @@ import (
 	"net"
 )
 
-func JoinHostTCP() net.Conn {
+func joinHostTCP() net.Conn {
 
 	log.Println("Client try to establish with host at ", conf.GameAddress)
 
@@ -16,5 +16,6 @@ func JoinHostTCP() net.Conn {
 	}
 
 	log.Println("Yeaahhh, client can successfully establish a tcp connection with host at ", conf.GameAddress)
-	return conn
+
+	conf.GameConn = conn
 }
