@@ -14,15 +14,15 @@ func ShowGameResult(loserStatus string) {
 	resultText := "WINNER WINNER CHICKEN DINNER"
 
 	if loserStatus == conf.PlayerStatus {
-		resultText = "YOU LOSE HA HA HA"
+		resultText = "   YOU LOSE HA HA HA"
 	}
 
 	fmt.Println("============================")
 	fmt.Println("============================\n")
 
-	fmt.Print(resultText)
+	fmt.Print(resultText, "\n\n")
 
-	fmt.Println("============================\n")
+	fmt.Println("============================")
 	fmt.Println("============================")
 
 	time.Sleep(time.Second * time.Duration(conf.SleepTime))
