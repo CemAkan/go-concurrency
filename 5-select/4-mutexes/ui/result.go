@@ -13,12 +13,12 @@ func ShowGAmeResult(loserStaus string) {
 		resultText = "YOU LOSE HA HA HA"
 	}
 
-	fmt.Println("======================================")
-	fmt.Println("======================================\n")
+	fmt.Println("============================")
+	fmt.Println("============================\n")
 
 	fmt.Print(resultText)
 
-	fmt.Println("======================================\n")
-	fmt.Println("======================================")
+	fmt.Println("============================\n")
+	fmt.Println("============================")
 
 }
