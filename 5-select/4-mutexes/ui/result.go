@@ -25,7 +25,7 @@ func ShowGameResult(loserStatus string) {
 	fmt.Println("============================\n")
 	fmt.Println("============================")
 
-	time.Sleep(time.Second * 5)
+	time.Sleep(time.Second * time.Duration(conf.SleepTime))
 
 	os.Exit(0)
 }
