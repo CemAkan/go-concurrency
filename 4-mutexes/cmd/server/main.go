@@ -11,23 +11,24 @@ import (
 )
 
 func main() {
-	cfg := config.LoadConfig()
+	config.LoadEnv()
 
 	dsn := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable",
-		cfg.DBHost, cfg.DBUser, cfg.DBPassword, cfg.DBName, cfg.DBPort)
+		config.GetEnv("DBHost", ""),
+		config.GetEnv("DBUser", ""),
+		config.GetEnv("DBPassword", ""),
+		config.GetEnv("DBName", ""),
+		config.GetEnv("DBPort", ""))
 
 	database, err := db.Connect(dsn)
 	if err != nil {
 		log.Fatalf("Database connection error: %v", err)
 	}
 
-	clickCounter := counter.NewClickCounter(cfg)
+	clickCounter := counter.NewClickCounter()
 	defer clickCounter.Stop()
 
 	app := fiber.New()
 
 	handler.RegisterRoutes(app, database, clickCounter)
-
-	fmt.Printf("Server running at http://localhost:%d\n", cfg.ServerPort)
-	log.Fatal(app.Listen(fmt.Sprintf(":%d", cfg.ServerPort)))
 }
