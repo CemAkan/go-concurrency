@@ -26,19 +26,29 @@ func NewClickCounter() *ClickCounter {
 		running: true,
 	}
 
+	// Cleanup interval
 	cleanupSecStr := config.GetEnv("CLICK_COUNTER_CLEANUP_INTERVAL", "300")
-	cleanupSec, _ := strconv.Atoi(cleanupSecStr)
-
+	cleanupSec, err := strconv.Atoi(cleanupSecStr)
+	if err != nil || cleanupSec <= 0 {
+		log.Printf("Invalid CLICK_COUNTER_CLEANUP_INTERVAL value '%s', using default 300 seconds", cleanupSecStr)
+		cleanupSec = 300
+	}
 	cc.cleanupInterval = time.Duration(cleanupSec) * time.Second
 
+	// Max entries
 	maxEntriesStr := config.GetEnv("CLICK_COUNTER_MAX_ENTRIES", "10000")
-	maxEntries, _ := strconv.Atoi(maxEntriesStr)
+	maxEntries, err := strconv.Atoi(maxEntriesStr)
+	if err != nil || maxEntries <= 0 {
+		log.Printf("Invalid CLICK_COUNTER_MAX_ENTRIES value '%s', using default 10000", maxEntriesStr)
+		maxEntries = 10000
+	}
 	cc.maxEntries = maxEntries
 
-	// Modern rand seed
+	// Seed random
 	src := rand.NewSource(time.Now().UnixNano())
-	rand.New(src) // sadece seed için
+	rand.New(src) // sadece seed için kullanılıyor
 
+	// Başlatıcı goroutine: düzenli cleanup döngüsü
 	go cc.cleanupLoop()
 
 	return cc
