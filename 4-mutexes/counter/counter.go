@@ -26,12 +26,12 @@ func NewClickCounter() *ClickCounter {
 		running: true,
 	}
 
-	cleanupSecStr := config.EnvGet("CLICK_COUNTER_CLEANUP_INTERVAL", "300")
+	cleanupSecStr := config.GetEnv("CLICK_COUNTER_CLEANUP_INTERVAL", "300")
 	cleanupSec, _ := strconv.Atoi(cleanupSecStr)
 
 	cc.cleanupInterval = time.Duration(cleanupSec) * time.Second
 
-	maxEntriesStr := config.EnvGet("CLICK_COUNTER_MAX_ENTRIES", "10000")
+	maxEntriesStr := config.GetEnv("CLICK_COUNTER_MAX_ENTRIES", "10000")
 	maxEntries, _ := strconv.Atoi(maxEntriesStr)
 	cc.maxEntries = maxEntries
 
