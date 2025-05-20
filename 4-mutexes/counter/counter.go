@@ -33,7 +33,7 @@ func NewClickCounter() *ClickCounter {
 		log.Printf("Invalid CLICK_COUNTER_CLEANUP_INTERVAL value '%s', using default 300 seconds", cleanupSecStr)
 		cleanupSec = 300
 	}
-	cc.cleanupInterval = time.Duration(cleanupSec) * time.Second
+	cc.cleanupInterval = time.Duration(cleanupSec) * time.Minute
 
 	// Max entries
 	maxEntriesStr := config.GetEnv("CLICK_COUNTER_MAX_ENTRIES", "10000")
