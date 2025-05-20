@@ -32,7 +32,8 @@ func main() {
 	defer clickCounter.Stop()
 
 	app := fiber.New()
-	app.Listen(":5000")
-
 	handler.RegisterRoutes(app, database, clickCounter)
+
+	app.Listen(":4000")
+
 }
