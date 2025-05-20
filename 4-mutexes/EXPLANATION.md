@@ -1,65 +1,59 @@
-# Project Explanation: Mutex-Protected Click Counter with Environment-Based Configuration in a Minimal URL Shortener
+# Mutex-Protected Click Counter in a Minimal URL Shortener — Guide & Explanation
 
 ## Overview
 
-This project implements a **minimal URL shortener** service in Go, focusing on:
+This project implements a minimal URL shortening service in Go that focuses on:
 
-- **Thread-safe in-memory click counting** using **mutex** for concurrency safety,
-- **PostgreSQL-backed URL storage** with GORM ORM,
-- **Fiber web framework** for lightweight and performant HTTP API,
-- **Configuration management via environment variables** to enable flexible deployment across environments.
-
-The primary goal is to provide a clean, efficient, and concurrency-safe solution for counting clicks on shortened URLs without incurring database overhead on every click, while keeping the system simple and maintainable.
-
----
-
-## Key Components
-
-### 1. In-Memory Click Counter
-
-- Stored as a Go map of `map[string]int64` mapping short codes to their click counts.
-- Protected by a `sync.Mutex` to avoid data races in concurrent increment and read operations.
-- Provides two core methods:
-    - `Increment(code string)` safely increments the click count for a given short code.
-    - `Get(code string)` safely retrieves the current count for a short code.
-- Designed to reduce database writes by aggregating clicks in-memory, improving performance under high load.
-
-### 2. Environment-Based Configuration
-
-- Uses environment variables (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`, `APP_PORT`) for all sensitive and environment-dependent settings.
-- Enables easy deployment and configuration across local, staging, and production environments without code changes.
-- Configuration is loaded via a dedicated `config` package (e.g., using `github.com/caarlos0/env`).
-
-### 3. PostgreSQL and GORM Integration
-
-- URL records (`OriginalURL`, `ShortCode`, `ClickCount`) are stored persistently in PostgreSQL.
-- GORM ORM provides seamless mapping and migration support.
-- Database schema migrations are handled automatically on application start.
-- Click count in the DB is updated asynchronously or periodically from the in-memory counter, minimizing write contention.
-
-### 4. HTTP API with Fiber
-
-- Endpoints:
-    - `POST /shorten`: Accepts a long URL, generates a unique short code, and stores the mapping.
-    - `GET /:code`: Redirects to the original URL and increments the click count both in-memory and the DB.
-- Fiber framework chosen for performance and developer ergonomics.
+- **Thread-safe in-memory click counting** with `sync.Mutex` to avoid data races,
+- **PostgreSQL database storage** for URLs using GORM ORM,
+- **HTTP API** built with Fiber web framework,
+- **Environment-based configuration** for flexible deployment,
+- **Clean and efficient concurrency management** for counting URL clicks without excessive DB writes.
 
 ---
 
-## Concurrency and Safety Considerations
+## Components & Architecture
 
-- **Why Mutex?**  
-  Go maps are not safe for concurrent write/read access. Using a mutex ensures no race conditions when multiple goroutines increment click counts simultaneously.
+### 1. ClickCounter: Thread-Safe In-Memory Counter
 
-- **Avoiding DB Overhead**  
-  Writing to the database on every click can cause bottlenecks. The in-memory counter aggregates clicks safely and can batch updates to the DB asynchronously (not implemented here but recommended).
+- Uses a Go map `map[string]int64` to store click counts by short URL code.
+- Protects map access using `sync.RWMutex` for safe concurrent increments and reads.
+- Supports:
+  - `Increment(code string)` — safely increments the click count,
+  - `Get(code string)` — safely retrieves the current count.
+- Maintains an internal cleanup goroutine that periodically trims the map to a max size (`maxEntries`) to avoid unbounded memory growth.
+- Cleanup interval and max entries are configurable via environment variables (`CLICK_COUNTER_CLEANUP_INTERVAL`, `CLICK_COUNTER_MAX_ENTRIES`).
 
-- **Clean Shutdown & Resource Management**  
-  The counter exposes `Stop()` to allow graceful shutdown of any cleanup goroutines, preventing memory leaks and ensuring data consistency.
+### 2. Database Layer with GORM and PostgreSQL
+
+- Defines a `ShortURL` struct with fields:
+  - `OriginalURL string` — the full URL,
+  - `ShortCode string` — unique short code,
+  - `ClickCount int64` — persisted click count.
+- Uses GORM migrations to create and maintain the database schema.
+- Generates random short codes for new URLs, checking uniqueness before creation.
+- Retrieves URLs by short code on requests.
+
+### 3. HTTP API with Fiber
+
+- Provides endpoints:
+  - `POST /shorten` — accepts JSON with a long URL, creates and returns a unique short code,
+  - `GET /:code` — redirects to the original URL, increments click counters in-memory and asynchronously updates DB.
+- Implements concurrency-safe click counting on GET requests with minimal DB write overhead.
+
+### 4. Configuration
+
+- All sensitive and environment-dependent settings are loaded via environment variables:
+  - Database connection parameters (`DB_HOST`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_PORT`),
+  - Application port (`APP_PORT`),
+  - Click counter cleanup interval and max entries,
+- Enables flexible deployment across development, staging, and production.
 
 ---
 
-## Environment Variables Example
+## Usage Guide
+
+### Environment Variables Example
 
 ```env
 DB_HOST=localhost
@@ -67,4 +61,9 @@ DB_USER=cemakan
 DB_PASSWORD=123456789cem
 DB_NAME=goroutines
 DB_PORT=5432
-APP_PORT=383
+
+APP_PORT=4000
+
+CLICK_COUNTER_CLEANUP_INTERVAL=5m     # Duration format: "5m", "30s"
+CLICK_COUNTER_MAX_ENTRIES=10000
+```
