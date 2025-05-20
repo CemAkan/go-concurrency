@@ -3,6 +3,7 @@ package counter
 import (
 	"log"
 	"math/rand"
+	"strconv"
 	"sync"
 	"time"
 
@@ -10,26 +11,34 @@ import (
 )
 
 type ClickCounter struct {
-	mu      sync.RWMutex
-	counts  map[string]int64
-	config  config.Config
-	quit    chan struct{}
-	running bool
+	mu              sync.RWMutex
+	counts          map[string]int64
+	quit            chan struct{}
+	running         bool
+	cleanupInterval time.Duration
+	maxEntries      int
 }
 
-func NewClickCounter(cfg config.Config) *ClickCounter {
+func NewClickCounter() *ClickCounter {
 	cc := &ClickCounter{
 		counts:  make(map[string]int64),
-		config:  cfg,
 		quit:    make(chan struct{}),
 		running: true,
 	}
 
-	// Modern rand usage with rand.NewSource
-	src := rand.NewSource(time.Now().UnixNano())
-	rand.New(src) // not used here, but seed is set without deprecated Seed()
+	cleanupSecStr := config.EnvGet("CLICK_COUNTER_CLEANUP_INTERVAL", "300")
+	cleanupSec, _ := strconv.Atoi(cleanupSecStr)
 
-	// Start cleanup routine to remove old entries or limit map size
+	cc.cleanupInterval = time.Duration(cleanupSec) * time.Second
+
+	maxEntriesStr := config.EnvGet("CLICK_COUNTER_MAX_ENTRIES", "10000")
+	maxEntries, _ := strconv.Atoi(maxEntriesStr)
+	cc.maxEntries = maxEntries
+
+	// Modern rand seed
+	src := rand.NewSource(time.Now().UnixNano())
+	rand.New(src) // sadece seed için
+
 	go cc.cleanupLoop()
 
 	return cc
@@ -55,7 +64,7 @@ func (c *ClickCounter) Stop() {
 }
 
 func (c *ClickCounter) cleanupLoop() {
-	ticker := time.NewTicker(c.config.CleanupInterval)
+	ticker := time.NewTicker(c.cleanupInterval)
 	defer ticker.Stop()
 
 	for {
@@ -72,7 +81,7 @@ func (c *ClickCounter) cleanUp() {
 	c.mu.Lock()
 	defer c.mu.Unlock()
 
-	if len(c.counts) <= c.config.MaxEntries {
+	if len(c.counts) <= c.maxEntries {
 		return
 	}
 
@@ -80,7 +89,7 @@ func (c *ClickCounter) cleanUp() {
 	for k := range c.counts {
 		delete(c.counts, k)
 		removed++
-		if len(c.counts) <= c.config.MaxEntries {
+		if len(c.counts) <= c.maxEntries {
 			break
 		}
 	}
