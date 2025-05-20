@@ -1,14 +1,12 @@
 package handler
 
 import (
+	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 	"mutexExercise/counter"
 	"mutexExercise/internal/db"
 	"net/http"
-
-	"github.com/gofiber/fiber/v2"
-	"gorm.io/gorm"
 )
-
 func RegisterRoutes(app *fiber.App, database *gorm.DB, clickCounter *counter.ClickCounter) {
 	app.Post("/shorten", func(c *fiber.Ctx) error {
 		type Request struct {
@@ -45,4 +43,23 @@ func RegisterRoutes(app *fiber.App, database *gorm.DB, clickCounter *counter.Cli
 
 		return c.Redirect(shortURL.OriginalURL, http.StatusFound)
 	})
-}
+
+	app.Get("/stats/:code", func(c *fiber.Ctx) error {
+		code := c.Params("code")
+
+		shortURL, err := db.GetShortURL(database, code)
+		if err != nil {
+			return fiber.ErrNotFound
+		}
+
+		// İn-memory click sayısını da al
+		memCount := clickCounter.Get(code)
+
+		return c.JSON(fiber.Map{
+			"short_code":   shortURL.ShortCode,
+			"original_url": shortURL.OriginalURL,
+			"db_clicks":    shortURL.ClickCount,
+			"mem_clicks":   memCount,
+		})
+	})
+}})
