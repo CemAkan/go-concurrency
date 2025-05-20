@@ -7,6 +7,7 @@ import (
 	"mutexExercise/internal/db"
 	"net/http"
 )
+
 func RegisterRoutes(app *fiber.App, database *gorm.DB, clickCounter *counter.ClickCounter) {
 	app.Post("/shorten", func(c *fiber.Ctx) error {
 		type Request struct {
@@ -62,4 +63,4 @@ func RegisterRoutes(app *fiber.App, database *gorm.DB, clickCounter *counter.Cli
 			"mem_clicks":   memCount,
 		})
 	})
-}})
+}
